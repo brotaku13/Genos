@@ -56,10 +56,22 @@ impl Command {
         }
     }
 
-    pub fn arg<T: Into<String>>(mut self, arg: T) -> Self {
+    pub fn add_arg<T: Into<String>>(&mut self, arg: T) {
         let arg = arg.into();
         self.args.push(arg);
+    }
+
+    pub fn arg<T: Into<String>>(mut self, arg: T) -> Self {
+        self.add_arg(arg);
         self
+    }
+
+    pub fn add_args<T, S>(&mut self, args: T)
+    where
+        T: IntoIterator<Item = S>,
+        S: Into<String>,
+    {
+        self.args.extend(args.into_iter().map(|s| s.into()));
     }
 
     pub fn args<T, S>(mut self, args: T) -> Self
@@ -67,8 +79,16 @@ impl Command {
         T: IntoIterator<Item = S>,
         S: Into<String>,
     {
-        self.args.extend(args.into_iter().map(|s| s.into()));
+        self.add_args(args);
         self
+    }
+
+    pub fn add_env<K, V>(&mut self, key: K, val: V)
+    where
+        K: Into<String>,
+        V: Into<String>,
+    {
+        self.envs.insert(key.into(), val.into());
     }
 
     pub fn env<K, V>(mut self, key: K, val: V) -> Self
@@ -76,7 +96,7 @@ impl Command {
         K: Into<String>,
         V: Into<String>,
     {
-        self.envs.insert(key.into(), val.into());
+        self.add_env(key, val);
         self
     }
 
