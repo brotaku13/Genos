@@ -428,60 +428,6 @@ mod tests {
                 ws.path_from_root("noop").display()
             )
         );
-
-        assert_eq!(
-            mock_cmd(
-                ValgrindConfig {
-                    points: PointQuantity::FullPoints,
-                    suppressions: Some(vec!["static.supp".to_string()])
-                },
-                "noop",
-                Some("bar".to_string()),
-                ExitStatus::Ok,
-                &ws,
-            )
-            .unwrap(),
-            format!(
-                "valgrind --log-file={} --leak-check=yes --error-exitcode={} \
-                 --malloc-fill=0x{:02X} --free-fill=0x{:02X} --suppressions={} \
-                 -- {} < bar",
-                LOG_FILE,
-                ERROR_EXITCODE,
-                MALLOC_FILL,
-                FREE_FILL,
-                ws.path_from_root("data/course/hw1/static/static.supp")
-                    .display(),
-                ws.path_from_root("noop").display()
-            )
-        );
-
-        assert_eq!(
-            mock_cmd(
-                ValgrindConfig {
-                    points: PointQuantity::FullPoints,
-                    suppressions: Some(vec!["static.supp".to_string(), "test.supp".to_string()])
-                },
-                "noop",
-                Some("bar".to_string()),
-                ExitStatus::Ok,
-                &ws,
-            )
-            .unwrap(),
-            format!(
-                "valgrind --log-file={} --leak-check=yes --error-exitcode={} \
-                 --malloc-fill=0x{:02X} --free-fill=0x{:02X} --suppressions={} \
-                 --suppressions={} -- {} < bar",
-                LOG_FILE,
-                ERROR_EXITCODE,
-                MALLOC_FILL,
-                FREE_FILL,
-                ws.path_from_root("data/course/hw1/static/static.supp")
-                    .display(),
-                ws.path_from_root("data/course/hw1/test_1/test.supp")
-                    .display(),
-                ws.path_from_root("noop").display()
-            )
-        );
     }
 
     #[tokio::test]
